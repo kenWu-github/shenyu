@@ -90,10 +90,12 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public String register(final RuleDTO ruleDTO, final String name, final boolean metaDataIsExist) {
-        if (Objects.nonNull(ruleMapper.findByName(name)) && metaDataIsExist) {
+    public String registerDefault(final RuleDTO ruleDTO) {
+        RuleDO exist = ruleMapper.findBySelectorIdAndName(ruleDTO.getSelectorId(), ruleDTO.getName());
+        if (Objects.nonNull(exist)) {
             return "";
         }
+
         RuleDO ruleDO = RuleDO.buildRuleDO(ruleDTO);
         List<RuleConditionDTO> ruleConditions = ruleDTO.getRuleConditions();
         if (StringUtils.isEmpty(ruleDTO.getId())) {
@@ -219,6 +221,15 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
+    public List<RuleData> findBySelectorIdList(final List<String> selectorIdList) {
+        return ruleMapper.findBySelectorIds(selectorIdList)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(this::buildRuleData)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public RuleDO findByName(final String name) {
         return ruleMapper.findByName(name);
     }
@@ -235,21 +246,23 @@ public class RuleServiceImpl implements RuleService {
     }
 
     private RuleData buildRuleData(final RuleDO ruleDO) {
-        // query for conditions
-        List<ConditionData> conditions = ruleConditionMapper.selectByQuery(
-                new RuleConditionQuery(ruleDO.getId()))
-                .stream()
-                .filter(Objects::nonNull)
-                .map(ConditionTransfer.INSTANCE::mapToRuleDO)
-                .collect(Collectors.toList());
         SelectorDO selectorDO = selectorMapper.selectById(ruleDO.getSelectorId());
         if (Objects.isNull(selectorDO)) {
             return null;
         }
+
         PluginDO pluginDO = pluginMapper.selectById(selectorDO.getPluginId());
         if (Objects.isNull(pluginDO)) {
             return null;
         }
+
+        // query for conditions
+        List<ConditionData> conditions = ruleConditionMapper.selectByQuery(
+                        new RuleConditionQuery(ruleDO.getId()))
+                .stream()
+                .filter(Objects::nonNull)
+                .map(ConditionTransfer.INSTANCE::mapToRuleDO)
+                .collect(Collectors.toList());
         return RuleDO.transFrom(ruleDO, pluginDO.getName(), conditions);
     }
 }

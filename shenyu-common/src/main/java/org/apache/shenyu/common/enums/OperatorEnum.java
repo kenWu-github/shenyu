@@ -57,21 +57,16 @@ public enum OperatorEnum {
      * Contains operator enum.
      */
     CONTAINS("contains", true),
-
-    /**
-     * SpEL enum.
-     */
-    SPEL("SpEL", true),
-
-    /**
-     * Groovy enum.
-     */
-    GROOVY("Groovy", true),
-
+    
     /**
      * Time before operator enum.
      */
     TIME_BEFORE("TimeBefore", true),
+
+    /**
+     * Exclude operator enum.
+     */
+    EXCLUDE("exclude", true),
 
     /**
      * Time after operator enum.

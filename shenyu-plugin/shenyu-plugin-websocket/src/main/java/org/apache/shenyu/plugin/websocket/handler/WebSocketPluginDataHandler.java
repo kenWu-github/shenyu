@@ -17,12 +17,12 @@
 
 package org.apache.shenyu.plugin.websocket.handler;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.shenyu.common.dto.RuleData;
 import org.apache.shenyu.common.dto.SelectorData;
 import org.apache.shenyu.common.dto.convert.selector.WebSocketUpstream;
 import org.apache.shenyu.common.dto.convert.rule.impl.WebSocketRuleHandle;
 import org.apache.shenyu.common.enums.PluginEnum;
-import org.apache.shenyu.common.utils.CollectionUtils;
 import org.apache.shenyu.common.utils.GsonUtils;
 import org.apache.shenyu.loadbalancer.cache.UpstreamCacheManager;
 import org.apache.shenyu.loadbalancer.entity.Upstream;
@@ -72,7 +72,7 @@ public class WebSocketPluginDataHandler implements PluginDataHandler {
 
     @Override
     public String pluginNamed() {
-        return PluginEnum.DIVIDE.getName();
+        return PluginEnum.WEB_SOCKET.getName();
     }
     
     private List<Upstream> convertUpstreamList(final List<WebSocketUpstream> upstreamList) {
